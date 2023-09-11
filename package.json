@@ -1,0 +1,17 @@
+{
+  "name": "learn-node.js",
+  "version": "1.0.0",
+  "description": "Project created to learn the basic usage of Node.Js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mysql2": "^3.6.0",
+    "sequelize": "^6.33.0"
+  }
+}
