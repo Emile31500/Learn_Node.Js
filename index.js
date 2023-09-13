@@ -1,6 +1,6 @@
 const express = require('express');
 require('dotenv').config();
-// const Taks = require('./Model/Task.js');
+Task = require('./Model/Task.js');
 // User = require('./Model/User.js');
 
 const port = 3000;
@@ -9,7 +9,8 @@ const mysql = require('mysql2');
 const sequelize = require('./db.js');
 
 
-app.use(express.json());
+//app.use(express.json());
+app.use(express.static('public'));
 
 app.listen(port, () => {
 
@@ -23,13 +24,14 @@ app.get('/api/task', (req, res) => {
     let results;
     
     results = sequelize.query('SELECT * FROM `task` WHERE 1', {
-
-        raw: true 
+        model : Task,
+        mapToModel : true,
+        raw: false 
 
     }).then((results) => {
 
         res.setHeader('Content-Type', 'application/json');
-        res.json(results[0]); // Assuming results is an array of rows
+        res.json(results); // Assuming results is an array of rows
 
     }).catch((error) => {
 
@@ -40,35 +42,22 @@ app.get('/api/task', (req, res) => {
 });
 
 app.post('/api/task', (req, res) => {
-    
-    const connection = mysql.createConnection({
-        host: '127.0.0.1',
-        user: 'root',
-        password: '',
-        database: 'nodejs_todo'
-      });
-    
 
     const requestBody = req.body;
-
-    console.log(requestBody);
-
-    connection.query("INSERT INTO task(`title`, `content`, `created_at`, `is_done`, `user_id`) VALUES ('" + requestBody.title + "','" + requestBody.content + "','" + requestBody.created_at + "' ," + requestBody.is_done + ", " + requestBody.user_id + ") ", (error, results, fields) => {
     
-        if (error) {
+    const newTask = Task.create ({
+        title: requestBody.title,
+        content: requestBody.content,
+        created_at: requestBody.created_at,
+        is_done: requestBody.is_done
 
-            console.error('Error executing query:', error);
-            return;
+    }).catch(error => {
 
-        } else {
+        console.log(error);
+        res.statusCode = 501
+        res.json({'status' : 501});
+    })
 
-            res.setHeader('Content-Type', 'application/json');
-            res.json({"status": 201});
-
-        }
-    
-    });
-    
-    connection.end();
-
+    res.statusCode = 201
+    res.json(newTask);
 });
